@@ -1,7 +1,7 @@
 # [TR]
 # 🚀 Flutter GitHub Actions CI/CD ve Firebase Deployment Örneği
 
-Bu depo, Flutter projeleri için GitHub Actions ile sürekli entegrasyon ve sürekli dağıtım (CI/CD) örnek bir yapı içermektedir.
+Bu depo, GitHub Actions kullanarak Flutter projeleri için sürekli entegrasyon ve sürekli dağıtım (CI/CD) uygulamanın bir örneği olarak hizmet verir. Bu süreç, otomatik testler, kod analizi, derleme süreçleri, Firebase App Distribution aracılığıyla dağıtım ve testerlara Microsoft Teams bildirimleri içerir. 🚀
 
 ## 🛠️ Gereksinimler
 
@@ -50,7 +50,7 @@ Umarım bu örnek, Flutter projelerinizde CI/CD sürecini geliştirmenize yardı
 ## [EN]
 # 🚀 Flutter GitHub Actions CI/CD and Firebase Deployment Example
 
-This repository contains an example structure for continuous integration and continuous deployment (CI/CD) for Flutter projects using GitHub Actions.
+This repository serves as an example for implementing continuous integration and continuous deployment (CI/CD) for Flutter projects using GitHub Actions. The workflow includes automated testing, code analysis, build processes, Firebase App Distribution for distribution, and Microsoft Teams notifications for testers.
 
 ## 🛠️ Requirements
 
