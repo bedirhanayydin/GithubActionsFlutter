@@ -33,7 +33,7 @@ jobs:
         run: flutter pub get
 
       - name: Build APK release
-        run: flutter build apk --release --build-name "1.0.7" --build-number 7
+        run: flutter build apk --release
 
       - name: Build APP bundle
         run: flutter build appbundle
