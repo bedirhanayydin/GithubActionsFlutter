@@ -1,0 +1,104 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        type: string
+        required: true
+        default: "Manuel Debug Build"
+jobs:
+  build_apk:
+    name: Build Flutter (Android)
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@master
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "zulu"
+          java-version: "11"
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK release
+        run: flutter build apk --release --build-name "1.0.7" --build-number 7
+
+      - name: Build APP bundle
+        run: flutter build appbundle
+      - uses: actions/upload-artifact@v1
+        with:
+          name: release-apk
+          path: build/app/outputs/apk/release/app-release.apk
+      # - uses: actions/download-artifact@v3
+      #   with:
+      # #     name: release-apk
+      # - name: unzip downloaded APK
+      #   run: unzip release-apk
+      #   working-directory: ${{ github.workspace }}
+
+  beta_apk:
+    name: Upload Android Beta to Firebase App Distribution
+    needs: [build_apk]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download APK Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: release-apk
+          path: ${{ github.workspace }}/release-apk
+
+      - name: Deploy APK to Firebase
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.FIREBASE_APP_ID_ANDROID}}
+          token: ${{secrets.FIREBASE_TOKEN}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: testers
+          file: ${{ github.workspace }}/release-apk/app-release.apk
+          releaseNotes: ${{inputs.release_notes}}
+  send_teams_message:
+    name: Send Teams Message
+    needs: [beta_apk]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send a Notification
+        id: notify
+        uses: thechetantalwar/teams-notify@v2
+        with:
+          teams_webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          message: "🔥 New test version released.🎉 You can test it by downloading it from Firebase App Distribution.🥳 Good Work."
+      # - name: Send Teams Message
+      #   run: |
+      #     curl -H "Content-Type: application/json" -d '{
+      #     "type": "message",
+      #     "attributes": {
+      #         "contentType": "application/vnd.microsoft.teams.card.o365connector",
+      #         "content": {
+      #         "@type": "MessageCard",
+      #         "@context": "http://schema.org/extensions",
+      #         "summary": "GitHub Actions Notification",
+      #         "themeColor": "0076D7",
+      #         "sections": [
+      #             {
+      #             "activityTitle": "GitHub Actions Notification",
+      #             "activitySubtitle": "A workflow has been completed successfully.",
+      #             "markdown": true
+      #             }
+      #         ]
+      #         }
+      #     }
+      #     }' $TEAMS_WEBHOOK_URL
+      #   env:
+      #     TEAMS_WEBHOOK_URL: ${{secrets.TEAMS_WEBHOOK_URL}}

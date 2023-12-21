@@ -1,0 +1,45 @@
+default_platform(:android)
+
+# Add this at the top of your Fastfile to load the JSON file
+secrets = JSON.parse(File.read('../secret.json'))
+
+platform :android do
+  # desc "Run unit tests."
+  # private_lane :run_unit_tests do
+  #   gradle(
+  #     task: "test"
+  #   )
+  # end
+
+  desc "Deploy to Firebase"
+  lane :deploy_firebase do
+    firebase_app_distribution(
+      groups: "internal",
+      release_notes: "Bug fixed and improvements.",
+      apk_path: "../build/app/outputs/flutter-apk/app-release.apk",
+      firebase_cli_path: "/usr/local/bin/firebase",
+      firebase_cli_token: secrets["firebase_cli_token"],
+      app: secrets["app_id"],
+    )
+  end
+
+  # desc "Teams Bot"
+  # lane :teams_bot do
+  #   teams_bot(
+  #     teams_url: secrets["teams_url"],
+  #     title: 'Welcome from Fastlane',
+  #     summary: 'Integration is a success',
+  #     text: 'Hi there !! I am [Teams Bot](https://github.com/huextrat/fastlane-plugin-teams_bot). I can send messages on Microsoft Teams very easily from Fastlane.',
+  #     activity_title: 'Hey',
+  #     activity_subtitle: 'Working on Fastlane',
+  #     activity_image: 'https://seeklogo.com/images/F/fastlane-logo-6CA0B0B428-seeklogo.com.png',
+  #     theme_color: '321244',
+  #     use_markdown: true
+  #   )
+  # end
+
+  desc "Deploy a new version to the Firebase App Distribution"
+  lane :deploy do
+    deploy_firebase()
+  end
+end
