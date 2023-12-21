@@ -1,64 +1,78 @@
+# Continuous Deployment Workflow
 name: CD
 
+# Trigger the workflow on the completion of the "CI" workflow
 on:
   workflow_run:
     workflows: ["CI"]
     types:
       - completed
+  # Allow manual triggering of the workflow with release_notes input
   workflow_dispatch:
     inputs:
       release_notes:
         type: string
         required: true
         default: "Manuel Debug Build"
+
+# Define jobs to be executed in the workflow
 jobs:
+  # Job to build Flutter APK and APP bundle
   build_apk:
     name: Build Flutter (Android)
     runs-on: ubuntu-latest
+
+    # Only run this job if the "CI" workflow was successful
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@master
-      - uses: actions/setup-java@v2
-        with:
-          distribution: "zulu"
-          java-version: "11"
+
+      # Step 2: Set up Flutter
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
           cache: true
 
+      # Step 3: Install project dependencies
       - name: Install dependencies
         run: flutter pub get
 
+      # Step 4: Build APK release
       - name: Build APK release
         run: flutter build apk --release
 
+      # Step 5: Build APP bundle
       - name: Build APP bundle
         run: flutter build appbundle
+
+      # Step 6: Upload generated APK as an artifact
       - uses: actions/upload-artifact@v1
         with:
           name: release-apk
           path: build/app/outputs/apk/release/app-release.apk
-      # - uses: actions/download-artifact@v3
-      #   with:
-      # #     name: release-apk
-      # - name: unzip downloaded APK
-      #   run: unzip release-apk
-      #   working-directory: ${{ github.workspace }}
 
+  # Job to upload Android Beta to Firebase App Distribution
   beta_apk:
     name: Upload Android Beta to Firebase App Distribution
+
+    # This job depends on the completion of the "build_apk" job
     needs: [build_apk]
+
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Download APK artifact from the previous job
       - name: Download APK Artifact
         uses: actions/download-artifact@v2
         with:
           name: release-apk
           path: ${{ github.workspace }}/release-apk
 
+      # Step 2: Deploy APK to Firebase App Distribution
       - name: Deploy APK to Firebase
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
@@ -68,17 +82,25 @@ jobs:
           groups: testers
           file: ${{ github.workspace }}/release-apk/app-release.apk
           releaseNotes: ${{inputs.release_notes}}
+
+  # Job to send a Teams message
   send_teams_message:
     name: Send Teams Message
+
+    # This job depends on the completion of the "beta_apk" job
     needs: [beta_apk]
+
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Send a notification to Teams
       - name: Send a Notification
         id: notify
         uses: thechetantalwar/teams-notify@v2
         with:
           teams_webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
           message: "🔥 New test version released.🎉 You can test it by downloading it from Firebase App Distribution.🥳 Good Work."
+
       # - name: Send Teams Message
       #   run: |
       #     curl -H "Content-Type: application/json" -d '{
