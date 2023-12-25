@@ -11,16 +11,6 @@ if (flutterRoot == null) {
    // throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
-// def flutterVersionCode = 1
-// if (flutterVersionCode == null) {
-//     flutterVersionCode = '1'
-// }
-
-// def flutterVersionName = 1.0.0
-// if (flutterVersionName == null) {
-//     flutterVersionName = '1.0'
-// }
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
@@ -42,6 +32,17 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    def versionPropsFile = file('version.properties')
+    def versionProps = new Properties()
+
+    if (versionPropsFile.exists()) {
+        versionProps.load(new FileInputStream(versionPropsFile))
+    }
+
+    // Provide a default value (1) if flutterVersionCode is null
+    def flutterVersionCode = versionProps['flutterVersionCode'] ? versionProps['flutterVersionCode'].toInteger() : 1
+    def flutterVersionName = versionProps['flutterVersionName'] ?: "1.0.0"
+
     defaultConfig {
         applicationId "com.example.fastlane_example"
         minSdkVersion flutter.minSdkVersion
@@ -52,8 +53,6 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
         }
     }
