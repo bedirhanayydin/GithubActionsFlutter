@@ -46,8 +46,8 @@ android {
         applicationId "com.example.fastlane_example"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 23
-        versionName "1.0.23"
+        versionCode 1
+        versionName "1.0.1"
     }
 
     buildTypes {
