@@ -43,18 +43,11 @@ jobs:
       - name: List directory contents
         run: ls -R
       # Step 4: Increment version code and version name
-      - name: Increment version code and version name
+      - name: Increment version and build release APK
         run: |
-          version_code=$(grep 'versionCode' ./android/app/build.gradle | sed 's/[^0-9]//g')
-          version_name=$(grep 'versionName' ./android/app/build.gradle | sed 's/[^0-9.]//g')
-          version_code=$((version_code + 1))
-          version_name=$(echo "$version_name" | awk -F. '{$NF+=1; OFS="."; print $0}')
-          sed -i "s/versionCode $version_code/versionCode $((version_code))/g" ./android/app/build.gradle
-          sed -i "s/versionName \"$version_name\"/versionName \"$version_name\"/g" ./android/app/build.gradle
-
-      # Step 4: Build APK release
-      - name: Build APK release
-        run: flutter build apk --release
+          chmod +x increment_version.sh
+          ./android/increment_version.sh
+          flutter build apk --release
 
       # Step 5: Build APP bundle
       - name: Build APP bundle
