@@ -1,18 +1,18 @@
 #!/bin/bash
 
-set -x
+# Load version properties
+versionPropsFile="android/version.properties"
+flutterVersionCode=$(grep 'flutterVersionCode' $versionPropsFile | sed 's/[^0-9]//g')
+flutterVersionName=$(grep 'flutterVersionName' $versionPropsFile | cut -d '=' -f2 | tr -d '[:space:]')
 
-# Sürüm numarasını al
-version_code=$(grep 'versionCode' ./android/app/build.gradle | sed 's/[^0-9]//g')
-version_name=$(grep 'versionName' ./android/app/build.gradle | sed 's/[^0-9.]//g')
+# Increment version code
+flutterVersionCode=$((flutterVersionCode + 1))
 
-# Sürüm numarasını artır
-version_code=$((version_code + 1))
-version_name=$(echo "$version_name" | awk -F. '{$NF+=1; OFS="."; print $0}')
+# Update version name
+flutterVersionName="1.0.$flutterVersionCode"
 
-# Artırılmış sürüm numarasını Gradle dosyasına yaz
-sed -i 's/versionCode [0-9]*/versionCode '$version_code'/' ./android/app/build.gradle
-sed -i 's/versionName "[0-9.]*/versionName "'$version_name'"/' ./android/app/build.gradle
+# Update version properties file
+echo "flutterVersionCode=$flutterVersionCode" > $versionPropsFile
+echo "flutterVersionName='$flutterVersionName'" >> $versionPropsFile
 
-
-echo "Sürüm numarası artırıldı: versionCode $version_code, versionName $version_name"
+echo "Version incremented: flutterVersionCode=$flutterVersionCode, flutterVersionName=$flutterVersionName"
