@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Deploy to Firebase
 
+### android set_version
+
+```sh
+[bundle exec] fastlane android set_version
+```
+
+Get-Set Version Android
+
 ### android deploy
 
 ```sh
