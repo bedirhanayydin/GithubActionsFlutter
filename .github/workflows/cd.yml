@@ -40,6 +40,15 @@ jobs:
       # Step 3: Install project dependencies
       - name: Install dependencies
         run: flutter pub get
+      # Step 4: Increment version code and version name
+      - name: Increment version code and version name
+        run: |
+          version_code=$(grep 'versionCode' ../../android/app/build.gradle | sed 's/[^0-9]//g')
+          version_name=$(grep 'versionName' ../../android/app/build.gradle | sed 's/[^0-9.]//g')
+          version_code=$((version_code + 1))
+          version_name=$(echo "$version_name" | awk -F. '{$NF+=1; OFS="."; print $0}')
+          sed -i "s/versionCode $version_code/versionCode $((version_code))/g" app/build.gradle
+          sed -i "s/versionName \"$version_name\"/versionName \"$version_name\"/g" app/build.gradle
 
       # Step 4: Build APK release
       - name: Build APK release
