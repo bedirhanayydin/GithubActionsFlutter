@@ -1,6 +1,5 @@
 # Continuous Deployment Workflow
 name: CD
-
 # Trigger the workflow on the completion of the "CI" workflow
 on:
   workflow_run:
