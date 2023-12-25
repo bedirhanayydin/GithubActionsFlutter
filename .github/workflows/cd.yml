@@ -45,7 +45,7 @@ jobs:
       # Step 4: Increment version code and version name
       - name: Increment version and build release APK
         run: |
-          chmod +x increment_version.sh
+          chmod +x ./android/increment_version.sh
           ./android/increment_version.sh
           flutter build apk --release
 
