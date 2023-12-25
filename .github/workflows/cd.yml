@@ -43,8 +43,8 @@ jobs:
       # Step 4: Increment version code and version name
       - name: Increment version code and version name
         run: |
-          version_code=$(grep 'versionCode' app/build.gradle | sed 's/[^0-9]//g')
-          version_name=$(grep 'versionName' app/build.gradle | sed 's/[^0-9.]//g')
+          version_code=$(grep 'versionCode' ${{ github.workspace }}/android/app/build.gradle | sed 's/[^0-9]//g')
+          version_name=$(grep 'versionName' ${{ github.workspace }}/android/app/build.gradle | sed 's/[^0-9.]//g')
           version_code=$((version_code + 1))
           version_name=$(echo "$version_name" | awk -F. '{$NF+=1; OFS="."; print $0}')
           sed -i "s/versionCode $version_code/versionCode $((version_code))/g" app/build.gradle
