@@ -11,7 +11,6 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
-  firebase_remote_config: ^4.3.8
 
 dev_dependencies:
   flutter_test:

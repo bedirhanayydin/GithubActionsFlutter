@@ -11,16 +11,6 @@ if (flutterRoot == null) {
    // throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
 }
 
-// def flutterVersionCode = 1
-// if (flutterVersionCode == null) {
-//     flutterVersionCode = '1'
-// }
-
-// def flutterVersionName = 1.0.0
-// if (flutterVersionName == null) {
-//     flutterVersionName = '1.0'
-// }
-
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
@@ -49,7 +39,8 @@ android {
         versionProps.load(new FileInputStream(versionPropsFile))
     }
 
-    def flutterVersionCode = versionProps['flutterVersionCode'].toInteger() ?: 1
+    // Provide a default value (1) if flutterVersionCode is null
+    def flutterVersionCode = versionProps['flutterVersionCode'] ? versionProps['flutterVersionCode'].toInteger() : 1
     def flutterVersionName = versionProps['flutterVersionName'] ?: "1.0.0"
 
     defaultConfig {
@@ -58,12 +49,6 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode
         versionName flutterVersionName
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.debug
-        }
     }
 
     buildTypes {
