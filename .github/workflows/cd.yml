@@ -13,7 +13,6 @@ on:
         type: string
         required: true
         default: "Manuel Debug Build"
-
 # Define jobs to be executed in the workflow
 jobs:
   # Job to build Flutter APK and APP bundle
