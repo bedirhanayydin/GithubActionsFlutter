@@ -104,7 +104,6 @@ jobs:
         with:
           teams_webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
           message: "🔥 New test version released.🎉 You can test it by downloading it from Firebase App Distribution.🥳 Good Work."
-
       # - name: Send Teams Message
       #   run: |
       #     curl -H "Content-Type: application/json" -d '{
