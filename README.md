@@ -106,4 +106,4 @@ Hope this example helps you improve the CI/CD process for your Flutter projects!
 
 <img width=70% height=70% alt="Screenshot 2023-12-21 at 13 58 18" src="https://github.com/bedirhanayydin/GithubActionsFlutter/assets/58737803/2b752811-c13a-406e-9459-7dbaf6ea5c3d">
 
-Bu görseller, CI/CD sürecinin adımlarını göstermektedir. Umarım bu düzenleme README dosyanızın daha şık ve düzenli görünmesine yardımcı olur! 🚀
+Bu görseller, CI/CD sürecinin adımlarını göstermektedir. 🚀
